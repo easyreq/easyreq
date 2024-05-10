@@ -9,6 +9,7 @@ default-run = "req"
 [dependencies]
 anyhow = "1.0.83"
 clap = { version = "4.5.4", features = ["derive"] }
+clap_complete_command = "0.5.1"
 crossterm = "0.27.0"
 indexmap = { version = "2.2.6", features = ["serde"] }
 markdown = "1.0.0-alpha.17"

@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::Parser;
+use clap::{CommandFactory, Parser, Subcommand};
 use indexmap::{
     map::{Keys, Values},
     IndexMap,
@@ -163,7 +163,7 @@ fn add_topics(output: &mut Vec<String>, topics: &IndexMap<String, Topic>, level:
     }
 }
 
-#[derive(Parser)]
+#[derive(Subcommand)]
 enum Command {
     /// Outputs the JSON schema for the input data
     Schema,
@@ -190,6 +190,12 @@ enum Command {
         /// The path to the test output files
         #[arg(required=true, num_args=1..)]
         test_results: Vec<PathBuf>,
+    },
+    /// Generate shell completions
+    Completions {
+        /// The shell to generate the completions for
+        #[arg(value_enum)]
+        shell: clap_complete_command::Shell,
     },
 }
 
@@ -325,6 +331,9 @@ fn main() -> anyhow::Result<()> {
 
             let output = output.join("\n");
             println!("{output}");
+        }
+        Command::Completions { shell } => {
+            shell.generate(&mut Args::command(), &mut std::io::stdout());
         }
     }
 
