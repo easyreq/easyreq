@@ -125,6 +125,7 @@ pub struct Project {
         serialize_with = "serialize_version",
         deserialize_with = "deserialize_version"
     )]
+    #[schemars(with = "String", regex(pattern = r"^\d\.\d\.\d$"))]
     pub version: Version,
     #[serde(serialize_with = "my_trim")]
     pub description: String,
