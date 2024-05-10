@@ -1,0 +1,47 @@
+name: Req
+version: 1.0.0
+description: |-
+  The project has the following functionalities:
+  - Output the schema that is used to specify requirements
+  - Convert requirements from one of the allowed text formats to Markdown
+  - Convert requirements from one of the allowed text formats to HTML
+  - Check test output for requirements and output a summary of requirement test status
+topics:
+  TOPIC-1:
+    name: Output Data
+    requirements:
+      REQ-1.1:
+        name: Output Json Schema
+        description: The tool must be able to print a valid JSON schema of the input format
+      REQ-1.2:
+        name: Demo Data
+        description: The tool should be able to output a valid YAML string to be used as a starting point
+  TOPIC-2:
+    name: Reading Requirement Files
+    requirements:
+      REQ-2.1:
+        name: Parsing From Multiple Data Formats
+        description: 'The tool must be able to read requirements in the following formats:'
+        additional_info:
+          - YAML
+          - JSON
+          - RSN
+          - TOML
+
+  TOPIC-3:
+    name: File Processing
+    requirements:
+      REQ-3.1:
+        name: Pretty Print To Markdown
+        description: The tool must be able to produce Markdown, containing all the relevant data from the input data
+      REQ-3.2:
+        name: Pretty Print to HTML
+        description: The tool must be able to produce HTML, containing all the relevant data from the input data
+      REQ-3.3:
+        name: Analyze Test Output
+        description: |
+          The tool must be able to scan text files for requirement IDs and create a summary of the test status of the defined requirements.
+          The IDs must be in one of the following formats, where <ID> is a placeholder for the real id:
+        additional_info:
+          - "<ID>: passed"
+          - "<ID>: failed"

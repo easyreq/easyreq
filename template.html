@@ -1,0 +1,126 @@
+<head>
+    <style>
+        /* General body styling */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        /* Heading styles */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #0056b3;
+            margin-top: 20px;
+        }
+
+        h1 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #004494;
+        }
+
+        h3 {
+            color: #003073;
+        }
+
+        h4,
+        h5,
+        h6 {
+            color: #002652;
+            font-style: italic;
+            font-size: 1em;
+            /* Ensures that subtopic headings don't scale down too much */
+            font-weight: bold;
+            /* Adds emphasis to make subtopic headings stand out */
+        }
+
+        /* RFC keywords styling */
+        p {
+            font-size: 16px;
+        }
+
+        strong em {
+            color: #d63447;
+            /* Bright red for MUST, SHOULD, etc. */
+            font-style: normal;
+            /* Override italic style from em */
+        }
+
+        /* Link styling */
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* List styling for better readability */
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        ul li {
+            margin-bottom: 5px;
+        }
+
+        ul>li:not(:has(> p))::before {
+            content: "• ";
+            color: #007bff;
+            /* Matching the link color */
+            font-size: larger;
+        }
+
+        ul>li:not(:has(> ul))>p::before {
+            content: "• ";
+            color: #007bff;
+            /* Matching the link color */
+            font-size: larger;
+        }
+
+        /* Nested lists to indicate hierarchy */
+        ul ul {
+            padding-left: 20px;
+        }
+
+        /* Version and requirements emphasis */
+        strong {
+            font-weight: bold;
+        }
+
+        /* Special styling for configuration sections */
+        h2 {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        /* Config and Definitions section styling */
+        ul ul li {
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Detailed requirement items */
+        li strong em {
+            display: inline-block;
+            /* Ensures consistent alignment */
+        }
+    </style>
+</head>
+
+<body>
+    {{content}}
+</body>

@@ -1,0 +1,25 @@
+[package]
+name = "req"
+version = "0.1.0"
+edition = "2021"
+default-run = "req"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.83"
+clap = { version = "4.5.4", features = ["derive"] }
+crossterm = "0.27.0"
+indexmap = { version = "2.2.6", features = ["serde"] }
+markdown = "1.0.0-alpha.17"
+ratatui = "0.26.2"
+regex = "1.10.4"
+rsn = "0.1.0"
+schemars = { version = "0.8.19", features = ["indexmap2"] }
+serde = { version = "1.0.201", features = ["derive"] }
+serde_json = { version = "1.0.117", features = ["indexmap", "preserve_order"] }
+serde_yaml = "0.9.34"
+stringlit = "2.1.0"
+toml = { version = "0.8.12", features = ["indexmap", "preserve_order"] }
+tui = "0.19.0"
+version_operators = "0.0.1"
