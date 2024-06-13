@@ -35,16 +35,28 @@ fn nl() -> String {
 
 fn check_requirements(
     test_results: &str,
-    output: &mut IndexMap<String, bool>,
+    output: &mut IndexMap<String, (bool, Vec<String>)>,
     requirements: &IndexMap<String, Requirement>,
-    allowed_requirements: &Regex,
+    allowed_requirements: &[Regex],
 ) {
     for (id, _) in requirements {
-        if allowed_requirements.is_match(id) {
-            if test_results.contains(&format!("{}: failed", id.trim())) {
-                output.insert(id.trim().to_string(), false);
+        if allowed_requirements.iter().any(|r| r.is_match(id)) {
+            let search_string = format!("{}: failed", id.trim());
+            if test_results.contains(&search_string) {
+                let errors = test_results.lines().filter_map(|l| {
+                    if l.starts_with(&search_string) {
+                        l.split_once(":")
+                            .map(|(_, txt)| txt)
+                            .and_then(|txt| txt.split_once("-").map(|(_, err)| err.to_string()))
+                    } else {
+                        None
+                    }
+                });
+                output.insert(id.trim().to_string(), (false, errors.collect()));
             } else if test_results.contains(&format!("{}: passed", id.trim())) {
-                output.entry(id.trim().to_string()).or_insert(true);
+                output
+                    .entry(id.trim().to_string())
+                    .or_insert((true, Vec::new()));
             };
         }
     }
@@ -52,12 +64,12 @@ fn check_requirements(
 
 fn has_valid_requirements(
     mut requirements: Keys<String, Requirement>,
-    allowed_requirements: &Regex,
+    allowed_requirements: &[Regex],
 ) -> bool {
-    requirements.any(|id| allowed_requirements.is_match(id))
+    requirements.any(|id| allowed_requirements.iter().any(|r| r.is_match(id)))
 }
 
-fn has_valid_topics(mut topics: Values<String, Topic>, allowed_requirements: &Regex) -> bool {
+fn has_valid_topics(mut topics: Values<String, Topic>, allowed_requirements: &[Regex]) -> bool {
     topics.any(|topic| {
         has_valid_requirements(topic.requirements.keys(), allowed_requirements)
             || has_valid_topics(topic.subtopics.values(), allowed_requirements)
@@ -68,7 +80,7 @@ fn check_topics(
     test_results: &[PathBuf],
     output: &mut Vec<String>,
     topics: &IndexMap<String, Topic>,
-    allowed_requirements: &Regex,
+    allowed_requirements: &[Regex],
     level: usize,
 ) -> anyhow::Result<()> {
     if !has_valid_topics(topics.values(), allowed_requirements) {
@@ -102,16 +114,19 @@ fn check_topics(
 
         if !topic.requirements.is_empty() {
             for (id, req) in &topic.requirements {
-                let status = if let Some(status) = test_status.get(id) {
+                let (status, errors) = if let Some((status, errors)) = test_status.get(id) {
                     if *status {
-                        ":white_check_mark:"
+                        (":white_check_mark:", errors.to_owned())
                     } else {
-                        ":x:"
+                        (":x:", errors.to_owned())
                     }
                 } else {
-                    ":warning:"
+                    (":warning:", Vec::new())
                 };
                 output.push(format!("- _{}_ - {}: {status}", id.trim(), req.name));
+                for err in errors {
+                    output.push(format!("  - {}", err.trim()));
+                }
             }
 
             output.push(nl());
@@ -184,7 +199,7 @@ enum Command {
     Check {
         #[arg(short, long, default_value = "REQ-.*")]
         /// Regex to select which requirements should be checked
-        allowed_requirements: String,
+        allowed_requirements: Vec<String>,
         /// The path to the requirements file
         requirements: PathBuf,
         /// The path to the test output files
@@ -324,7 +339,10 @@ fn main() -> anyhow::Result<()> {
             requirements,
             test_results,
         } => {
-            let re = Regex::new(&allowed_requirements).unwrap();
+            let re = allowed_requirements
+                .into_iter()
+                .map(|r| Regex::new(&r).expect("Invalid regex!"));
+            let re: Vec<_> = re.collect();
             let project: Project = parse(&std::fs::read_to_string(requirements)?)?;
             let mut output = vec![format!("# Test Results - {}", project.name)];
             check_topics(&test_results, &mut output, &project.topics, &re, 2)?;
